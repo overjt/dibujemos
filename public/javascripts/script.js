@@ -26,7 +26,8 @@ $(function() {
     var timer = 0;
     // abrimos la conexion
     var socket = io.connect(url);
-
+    var disconnected = false;
+    var startTime = Date.now();
     /*
     Administradores de eventos
    */
@@ -117,10 +118,15 @@ $(function() {
         ctx.clearRect(0, 0, canvas[0].width, canvas[0].height);
     });
     socket.on('init', function(data) {
+        timerdiv.css('color', '');
         if (data.connections > 1) {
             connections.text(data.connections + ' conectados');
         } else {
             connections.text(data.connections + ' conectado');
+        }
+        if (disconnected) {
+            ctx.clearRect(0, 0, canvas[0].width, canvas[0].height);
+            disconnected = false;
         }
 
         timer = data.timer;
@@ -129,6 +135,14 @@ $(function() {
         image.onload = function() {
             ctx.drawImage(image, 0, 0);
         };
+    });
+    socket.on('disconnect', function() {
+        timerdiv.css('color', 'red');
+        disconnected = true;
+    });
+    socket.on('pong', function() {
+        var latency = Date.now() - startTime;
+        console.log(latency);
     });
     socket.on('connections', connectionHandler);
     canvas.on('mousedown', mousedownHandler);
@@ -147,10 +161,29 @@ $(function() {
             }
         }
     }, 10000);
+    var recoPoints = 3;
     setInterval(function() {
-        var minutes = Math.floor(timer / 60);
-        var seconds = timer - minutes * 60;
-        timerdiv.text(("0" + minutes).slice(-2) + ":" + ("0" + seconds).slice(-2) + " para reiniciar");
-        timer = timer - 1;
+        if (timer > 0 && disconnected == false) {
+            var minutes = Math.floor(timer / 60);
+            var seconds = timer - minutes * 60;
+            timerdiv.text(("0" + minutes).slice(-2) + ":" + ("0" + seconds).slice(-2) + " para reiniciar");
+            timer = timer - 1;
+        }
+        if (disconnected) {
+            var msg = "Reconectando"
+            for (var i = 0; i < recoPoints; i++) {
+                msg = msg + ".";
+            };
+            timerdiv.text(msg);
+            if (recoPoints > 1) {
+                recoPoints--;
+            } else {
+                recoPoints = 3;
+            }
+        }
     }, 1000);
+    setInterval(function() {
+        startTime = Date.now();
+        socket.emit('ping');
+    }, 2000);
 });

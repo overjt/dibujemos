@@ -5,10 +5,9 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var Canvas = require('canvas');
 var connections = 0;
-var canvas = new Canvas(1900, 1000);
+var canvas = new Canvas(3800, 2000);
 var ctx = canvas.getContext('2d');
 var clients = {};
-
 app.set('timer', process.env.TIMER || 180);
 
 var timer = app.get('timer');
@@ -60,6 +59,9 @@ io.on('connection', function(socket) {
         moveHandler(data);
         socket.broadcast.emit('move', data);
     });
+    socket.on('ping', function() {
+        socket.emit('pong');
+    });
     socket.on('disconnect', function() {
         connections--;
         console.log("Client disconnected");
@@ -76,11 +78,11 @@ server.listen(app.get('port'), function() {
 setInterval(function() {
     timer = timer - 1;
     if (timer <= 0) {
-    	timer = app.get('timer');
+        timer = app.get('timer');
         io.sockets.emit('clear', {
             timer: timer
         });
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
     }
 }, 1000);
