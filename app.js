@@ -10,6 +10,7 @@ var ctx = canvas.getContext('2d');
 var clients = {};
 
 app.set('timer', process.env.TIMER || 180);
+
 var timer = app.get('timer');
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -43,6 +44,8 @@ function drawLine(fromx, fromy, tox, toy, color) {
     ctx.stroke();
 
 }
+//apache fix
+io.set("transports", ["xhr-polling", "jsonp-polling"]);
 
 io.on('connection', function(socket) {
     connections++;
