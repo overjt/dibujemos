@@ -183,7 +183,9 @@ $(function() {
         }
     }, 1000);
     setInterval(function() {
-        startTime = Date.now();
-        socket.emit('ping');
+        if (disconnected == false) {
+            startTime = Date.now();
+            socket.emit('ping');
+        }
     }, 2000);
 });
