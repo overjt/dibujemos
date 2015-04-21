@@ -1,0 +1,22 @@
+{
+  "name": "dibujemos",
+  "version": "1.0.0",
+  "description": "dibujemos.cf",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dibujemos",
+    "online"
+  ],
+  "author": "Jonathan Toledo",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^1.2.2",
+    "ejs": "^2.3.1",
+    "express": "^4.12.3",
+    "socket.io": "^1.3.5",
+    "stylus": "^0.50.0"
+  }
+}

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dibujemos</title>
+  <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+<body>
+  <div id="connections"></div>
+  <div id="timer"></div>
+  <div id="cursors">
+    <!-- Aqui pondremos los cursores de nuestros amigos -->
+  </div>
+
+  <canvas id="paper" width="1900" height="1000">
+    Tu navegador debe soportar canvas
+  </canvas>
+
+  <hgroup id="instructions">
+    <h1>¡Dibujemos!</h1>
+    <h2>Dibuja en cualquier lugar con tu cursor</h2>
+    <script type="text/javascript">(function(){var x=document.createElement('script'), s=document.getElementsByTagName('script')[0];x.async=true;x.src='http://widgets.itaringa.net/share.js';s.parentNode.insertBefore(x,s)})()</script>
+<br />
+<t:sharer data-layout="medium_counter"></t:sharer>
+  </hgroup>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="javascripts/script.js"></script>
+
+</body>
+</html>
