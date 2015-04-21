@@ -13,6 +13,7 @@ $(function() {
     var instructions = $('#instructions');
     var connections = $('#connections');
     var timerdiv = $('#timer');
+    var latencydiv = $('#latency');
     var ctx = canvas[0].getContext('2d');
     var id = Math.round($.now() * Math.random());
 
@@ -34,11 +35,8 @@ $(function() {
 
     function moveHandler(data) {
         if (!(data.id in clients)) {
-            // le damos un cursor a cada usuario nuestro
             cursors[data.id] = $('<div class="cursor">').appendTo('#cursors');
         }
-
-        // movemos el cursor a su posicion
         cursors[data.id].css({
             'left': data.x,
             'top': data.y
@@ -47,8 +45,6 @@ $(function() {
         if (data.drawing && clients[data.id]) {
             drawLine(clients[data.id].x, clients[data.id].y, data.x, data.y, data.color);
         }
-
-        // actualizamos el estado
         clients[data.id] = data;
         clients[data.id].updated = $.now();
     }
@@ -58,8 +54,6 @@ $(function() {
         drawing = true;
         prev.x = e.pageX;
         prev.y = e.pageY;
-
-        // escondemos las instrucciones
         instructions.fadeOut();
     }
 
@@ -138,11 +132,12 @@ $(function() {
     });
     socket.on('disconnect', function() {
         timerdiv.css('color', 'red');
+        latencydiv.text("");
         disconnected = true;
     });
     socket.on('pong', function() {
         var latency = Date.now() - startTime;
-        console.log(latency);
+        latencydiv.text(latency + " ms");
     });
     socket.on('connections', connectionHandler);
     canvas.on('mousedown', mousedownHandler);
