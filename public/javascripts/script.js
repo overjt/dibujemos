@@ -5,7 +5,7 @@ $(function() {
         return false;
     }
 
-    var url = 'http://' + window.location.host;
+    var url = 'https://' + window.location.host;
 
     var doc = $(document);
     var win = $(window);
