@@ -18,8 +18,10 @@ app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*', function(req, res, next) {
-    if (req.headers['x-forwarded-proto'] != 'https') {
-        res.redirect('https://dibujemos.cf' + req.url);
+    if (req.headers['x-forwarded-proto'] == 'https') {
+        res.redirect('http://dibujemos.cf' + req.url);
+    } else if (req.hostname != "dibujemos.cf") {
+    	res.redirect(301, 'http://dibujemos.cf' + req.path)
     } else {
         next(); /* Continue to other routes if we're not redirecting */
     }
