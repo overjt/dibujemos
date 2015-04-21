@@ -44,9 +44,6 @@ function drawLine(fromx, fromy, tox, toy, color) {
     ctx.stroke();
 
 }
-//apache fix
-io.set("transports", ["xhr-polling", "jsonp-polling"]);
-
 io.on('connection', function(socket) {
     connections++;
     console.log('connected', connections);
