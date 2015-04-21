@@ -17,7 +17,13 @@ app.set('view engine', 'ejs');
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+app.get('*', function(req, res, next) {
+    if (req.headers['x-forwarded-proto'] != 'https') {
+        res.redirect('https://dibujemos.cf' + req.url);
+    } else {
+        next(); /* Continue to other routes if we're not redirecting */
+    }
+});
 app.get('/', function(req, res) {
     res.render('index', {
         title: 'Dibujemos'
