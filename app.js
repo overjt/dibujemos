@@ -21,9 +21,9 @@ app.get('*', function(req, res, next) {
     if (req.headers['x-forwarded-proto'] == 'https') {
         res.redirect('http://dibujemos.cf' + req.url);
     } else if (req.hostname != "dibujemos.cf") {
-    	res.redirect(301, 'http://dibujemos.cf' + req.path)
+    	res.redirect(301, 'http://dibujemos.cf' + req.url);
     } else {
-        next(); /* Continue to other routes if we're not redirecting */
+        next();
     }
 });
 app.get('/', function(req, res) {
