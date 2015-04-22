@@ -58,5 +58,20 @@ h3 {
   position: fixed;
   top: 20px;
   right: 0;
-  font-size: 18px;
+  font-size: 15px;
+}
+#latency {
+  position: fixed;
+  top: 37px;
+  right: 0;
+  font-size: 15px;
+}
+#colorPicker {
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+  bottom: 1px;
+  left: 5px;
+  border: 1px solid #fff;
 }

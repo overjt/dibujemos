@@ -14,6 +14,7 @@ $(function() {
     var connections = $('#connections');
     var timerdiv = $('#timer');
     var latencydiv = $('#latency');
+    latencydiv.hide();
     var ctx = canvas[0].getContext('2d');
     var id = Math.round($.now() * Math.random());
 
@@ -25,13 +26,36 @@ $(function() {
     var lastEmit = $.now();
     var cursorColor = randomColor();
     var timer = 0;
-    // abrimos la conexion
     var socket = io.connect(url);
     var disconnected = false;
     var startTime = Date.now();
-    /*
-    Administradores de eventos
-   */
+    $('body').keydown(function(e) {
+        var code = e.keyCode || e.which;
+        if (code == '9') {
+            latencydiv.fadeIn("fast", function() {});
+            return false;
+        }
+    });
+    $('body').keyup(function(e) {
+        var code = e.keyCode || e.which;
+        if (code == '9') {
+            latencydiv.fadeOut("fast", function() {});
+            return false;
+        }
+    });
+    $('#colorPicker').colpick({
+        submit: 0,
+        layout: 'rgbhex',
+        color: cursorColor.slice(1),
+        onChange: function(hsb, hex, rgb, el, bySetColor) {
+            $(el).css('background-color', '#' + hex);
+            cursorColor = '#' + hex;
+            // Fill the text box just if the color was set using the picker, and not the colpickSetColor function.
+            if (!bySetColor) $(el).val(hex);
+        }
+    }).keyup(function() {
+        $(this).colpickSetColor(this.value);
+    }).css('background-color', cursorColor);
 
     function moveHandler(data) {
         if (!(data.id in clients)) {
