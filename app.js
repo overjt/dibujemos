@@ -8,7 +8,7 @@ var connections = 0;
 var canvas = new Canvas(3800, 2000);
 var ctx = canvas.getContext('2d');
 var clients = {};
-app.set('timer', process.env.TIMER || 180);
+app.set('timer', process.env.TIMER || 300);
 
 var timer = app.get('timer');
 app.set('port', process.env.PORT || 3000);
