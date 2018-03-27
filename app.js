@@ -18,13 +18,14 @@ app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*', function(req, res, next) {
-    if (req.headers['x-forwarded-proto'] == 'https') {
-        res.redirect('http://dibujemos.over.cf' + req.url);
-    } else if (req.hostname != "dibujemos.over.cf") {
-    	res.redirect(301, 'http://dibujemos.over.cf' + req.url);
-    } else {
-        next();
-    }
+    // if (req.headers['x-forwarded-proto'] == 'https') {
+    //     res.redirect('http://dibujemos.over.cf' + req.url);
+    // } else if (req.hostname != "dibujemos.over.cf") {
+    // 	res.redirect(301, 'http://dibujemos.over.cf' + req.url);
+    // } else {
+    //     next();
+    // }
+    next();
 });
 app.get('/', function(req, res) {
     res.render('index', {
