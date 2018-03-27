@@ -24,7 +24,7 @@ function getTaringaButtons() {
 		body = buttons[0].getAttribute('data-body') || '';
 		force = buttons[0].getAttribute('data-force') || '';
 		iframe = document.createElement('iframe');
-		iframe.setAttribute('src', 'http://www.taringa.net/isharebutton.php?url=' + url + '&layout=' + layout + '&body=' + body + '&force=' + force);
+		iframe.setAttribute('src', 'https://www.taringa.net/isharebutton.php?url=' + url + '&layout=' + layout + '&body=' + body + '&force=' + force);
 		iframe.setAttribute('scrolling', 'no');
 		iframe.setAttribute('frameborder', 0);
 		iframe.setAttribute('allowtransparency', true);
