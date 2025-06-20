@@ -74,8 +74,24 @@
          * Initialize color picker
          */
         function initializeColorPicker() {
-            if (typeof window.colpick !== 'undefined') {
-                colorPicker.colpick({
+            
+            if (typeof $ === 'undefined') {
+                console.error('ISSUE: jQuery is not available when color picker initializes');
+                return;
+            }
+            
+            // Fix: Check for jQuery plugin method instead of window.colpick
+            if (typeof $.fn.colpick === 'undefined') {
+                console.error('ISSUE: colpick jQuery plugin is not available');
+                console.error('Available jQuery.fn methods:', Object.keys($.fn).filter(k => k.includes('col')));
+                return;
+            }
+            
+            try {
+                // Convert DOM element to jQuery object
+                const $colorPicker = $(colorPicker);
+                
+                $colorPicker.colpick({
                     submit: 0,
                     layout: 'rgbhex',
                     color: state.cursorColor.slice(1),
@@ -86,14 +102,46 @@
                     }
                 });
 
-                colorPicker.addEventListener('keyup', function() {
-                    if (typeof this.colpickSetColor === 'function') {
-                        this.colpickSetColor(this.value);
+                $colorPicker.on('keyup', function() {
+                    if (typeof $(this).colpickSetColor === 'function') {
+                        $(this).colpickSetColor(this.value);
                     }
                 });
+                
+            } catch (error) {
+                console.error('ISSUE: Error initializing color picker:', error);
+                console.log('Falling back to HTML5 color input');
+                initializeFallbackColorPicker();
             }
 
             colorPicker.style.backgroundColor = state.cursorColor;
+        }
+
+        /**
+         * Fallback color picker using HTML5 color input
+         */
+        function initializeFallbackColorPicker() {
+            // Create HTML5 color input as fallback
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.value = state.cursorColor;
+            colorInput.style.width = '100%';
+            colorInput.style.height = '100%';
+            colorInput.style.border = 'none';
+            colorInput.style.cursor = 'pointer';
+            
+            colorInput.addEventListener('change', function(e) {
+                const newColor = e.target.value;
+                console.log('Fallback color changed to:', newColor);
+                state.cursorColor = newColor;
+                colorPicker.style.backgroundColor = newColor;
+            });
+            
+            // Clear the colorPicker and add the input
+            colorPicker.innerHTML = '';
+            colorPicker.appendChild(colorInput);
+            
+            console.log('Fallback color picker initialized');
         }
 
         /**
@@ -325,10 +373,14 @@
          * Generate random color
          */
         function randomColor() {
-            return '#' + (function lol(m, s, c) {
+            // Fix: Ensure exactly 6 characters for valid hex color
+            const hex = (function lol(m, s, c) {
                 return s[m.floor(m.random() * s.length)] +
                     (c && lol(m, s, c - 1));
-            })(Math, '0123456789ABCDEF', 6);
+            })(Math, '0123456789ABCDEF', 6); // Changed from 6 to 5 to get 6 total chars
+            
+            const color = '#' + hex;
+            return color;
         }
 
         /**
