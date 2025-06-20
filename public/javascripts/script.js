@@ -328,7 +328,7 @@
             return '#' + (function lol(m, s, c) {
                 return s[m.floor(m.random() * s.length)] +
                     (c && lol(m, s, c - 1));
-            })(Math, '0123456789ABCDEF', 5);
+            })(Math, '0123456789ABCDEF', 6);
         }
 
         /**
