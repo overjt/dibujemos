@@ -2,34 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dibujemos</title>
-  <link rel="stylesheet" href="stylesheets/style.css">
-  <link rel="stylesheet" href="stylesheets/colpick.css" type="text/css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="Draw collaboratively in real-time with other users. Free online drawing application.">
+  <meta name="keywords" content="collaborative drawing, canvas, real-time, draw online">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="/stylesheets/colpick.css" type="text/css"/>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://letsdraw.jlabs.top/">
+  <meta property="og:title" content="<%= title %> - Collaborative Drawing">
+  <meta property="og:description" content="Draw collaboratively in real-time with other users">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://letsdraw.jlabs.top/">
+  <meta property="twitter:title" content="<%= title %> - Collaborative Drawing">
+  <meta property="twitter:description" content="Draw collaboratively in real-time with other users">
 </head>
 <body>
-  <div id="connections"></div>
-  <div id="timer"></div>
-  <div id="latency"></div>
-  <div id="colorPicker"></div>
-  <div id="cursors">
-  </div>
+  <!-- Connection status -->
+  <div id="connections" aria-live="polite"></div>
+  
+  <!-- Timer display -->
+  <div id="timer" aria-live="polite"></div>
+  
+  <!-- Latency display (hidden by default) -->
+  <div id="latency" aria-hidden="true"></div>
+  
+  <!-- Color picker -->
+  <div id="colorPicker" 
+       role="button" 
+       tabindex="0"
+       aria-label="Color selector"
+       title="Click to change brush color"></div>
+  
+  <!-- Cursors container for other users -->
+  <div id="cursors" aria-hidden="true"></div>
 
-  <canvas id="paper" width="3800" height="2000">
-    Tu navegador debe soportar canvas
+  <!-- Main drawing canvas -->
+  <canvas id="paper" 
+          width="3800" 
+          height="2000"
+          role="img"
+          aria-label="Collaborative drawing canvas">
+    Your browser must support HTML5 Canvas to use this application.
+    <p>Please update your browser or use a modern one like Chrome, Firefox, Safari or Edge.</p>
   </canvas>
 
-  <hgroup id="instructions">
-    <h1>¡Dibujemos!</h1>
-    <h2>Dibuja en cualquier lugar con tu cursor</h2>
-    <script type="text/javascript">(function(){var x=document.createElement('script'), s=document.getElementsByTagName('script')[0];x.async=true;x.src='javascripts/tshare.js';s.parentNode.insertBefore(x,s)})()</script>
-<br />
-<t:sharer data-layout="medium_counter"></t:sharer>
+  <!-- Instructions overlay -->
+  <hgroup id="instructions" role="banner">
+    <h1>Let's Draw!</h1>
+    <h2>Draw anywhere with your cursor or finger</h2>
+    <p><small>Press Tab to see connection latency</small></p>
+
   </hgroup>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-  <script src="javascripts/colpick.js"></script>
-  <script src="javascripts/script.js"></script>
+  <!-- Loading indicator -->
+  <div id="loading" style="display: none;" aria-live="polite">
+    <p>Connecting to server...</p>
+  </div>
 
+  <!-- JavaScript -->
+  <!-- Socket.IO Client (v4.x) -->
+  <script src="/socket.io/socket.io.js"></script>
+  
+  <!-- Color picker library -->
+  <script src="/javascripts/colpick.js"></script>
+  
+  <!-- Main application script (modernized, no jQuery) -->
+  <script src="/javascripts/script.js"></script>
+
+  <!-- Error handling -->
+  <script>
+    window.addEventListener('error', function(e) {
+      console.error('JavaScript Error:', e.error);
+      // Optionally send error to logging service
+    });
+
+    window.addEventListener('unhandledrejection', function(e) {
+      console.error('Unhandled Promise Rejection:', e.reason);
+      // Optionally send error to logging service
+    });
+  </script>
+
+  <!-- Service Worker for offline support (optional) -->
+  <script>
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      navigator.serviceWorker.register('/sw.js').catch(function(error) {
+        console.log('Service Worker registration failed:', error);
+      });
+    }
+  </script>
 </body>
 </html>

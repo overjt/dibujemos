@@ -1,25 +1,39 @@
 {
-  "name": "dibujemos",
+  "name": "letsdraw",
   "version": "1.0.0",
-  "description": "dibujemos.cf",
+  "description": "Let'sDraw - Real-time collaborative drawing application",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "dibujemos",
-    "online"
+    "letsdraw",
+    "online",
+    "collaborative",
+    "drawing",
+    "real-time"
   ],
   "author": "Jonathan Toledo",
   "license": "MIT",
   "dependencies": {
-    "canvas": "^1.2.2",
-    "ejs": "^2.3.1",
-    "express": "^4.12.3",
-    "socket.io": "^1.3.5",
-    "stylus": "^0.50.0"
+    "canvas": "^2.11.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.8.1",
+    "stylus": "^0.60.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   },
   "engines": {
-    "node": "9.9.0"
+    "node": ">=20.0.0"
   }
 }

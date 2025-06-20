@@ -1,0 +1,81 @@
+# Docker Compose Override File
+# This file extends the base docker-compose.yml with additional services
+# Useful for local development and debugging
+
+version: '3.8'
+
+services:
+  # Additional monitoring and debugging tools
+  
+  # Portainer for Docker management GUI
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: letsdraw-portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    networks:
+      - letsdraw-network
+    profiles:
+      - monitoring
+
+  # Log aggregation with Grafana Loki (lightweight)
+  loki:
+    image: grafana/loki:latest
+    container_name: letsdraw-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki-data:/loki
+    networks:
+      - letsdraw-network
+    profiles:
+      - logging
+
+  # Promtail for log collection
+  promtail:
+    image: grafana/promtail:latest
+    container_name: letsdraw-promtail
+    restart: unless-stopped
+    volumes:
+      - app-logs:/var/log/letsdraw:ro
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - letsdraw-network
+    depends_on:
+      - loki
+    profiles:
+      - logging
+
+  # Basic metrics with cAdvisor
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: letsdraw-cadvisor
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks:
+      - letsdraw-network
+    profiles:
+      - monitoring
+
+volumes:
+  portainer-data:
+    driver: local
+  loki-data:
+    driver: local
