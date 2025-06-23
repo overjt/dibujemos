@@ -1,59 +1,49 @@
-# Multi-stage build for optimal image size and security
-# Build stage
-FROM node:20-alpine AS builder
+# ---------- Etapa 1: build ----------
+FROM node:20-bookworm AS builder
 
-# Set working directory
+# Instala las librerías nativas requeridas para compilar node-canvas
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        python3            \
+        libcairo2-dev      \
+        libpango1.0-dev    \
+        libjpeg-dev        \
+        libgif-dev         \
+        librsvg2-dev       \
+        && rm -rf /var/lib/apt/lists/*
+
+# Crea y usa un directorio de trabajo
 WORKDIR /app
 
-# Copy package files
+# Copia solo los archivos de dependencias primero
 COPY package*.json ./
 
-# Install all dependencies (including devDependencies for build)
-RUN npm ci --only=production --silent
+# Instala dependencias (usa npm ci si tienes package-lock.json)
+RUN npm i
 
-# Production stage
-FROM node:20-alpine AS production
+# Copia el resto del código de la aplicación
+COPY . .
 
-# Install system dependencies required for canvas package
-RUN apk add --no-cache \
-    cairo-dev \
-    jpeg-dev \
-    pango-dev \
-    musl-dev \
-    giflib-dev \
-    pixman-dev \
-    pangomm-dev \
-    libjpeg-turbo-dev \
-    freetype-dev
+# ---------- Etapa 2: runtime ----------
+FROM node:20-slim
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S letsdraw -u 1001
+# Copiamos dependencias de sistema (solo las runtime)    
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libcairo2    \
+        libpango-1.0-0 \
+        libjpeg62-turbo \
+        libgif7       \
+        librsvg2-2    \
+        && rm -rf /var/lib/apt/lists/*
 
-# Set working directory  
+# Copiamos la app compilada desde la etapa builder
 WORKDIR /app
+COPY --from=builder /app .
 
-# Copy production dependencies from builder stage
-COPY --from=builder --chown=letsdraw:nodejs /app/node_modules ./node_modules
-
-# Copy application code
-COPY --chown=letsdraw:nodejs . .
-
-# Create logs directory with proper permissions
-RUN mkdir -p logs && chown -R letsdraw:nodejs logs
-
-# Switch to non-root user
-USER letsdraw
-
-# Expose port
+# Puerto donde escucha tu app (cámbialo si usas otro)
 EXPOSE 3000
 
-# Add health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD node healthcheck.js
-
-# Set production environment
-ENV NODE_ENV=production
-
-# Start the application
+# Comando de arranque
 CMD ["npm", "start"]
